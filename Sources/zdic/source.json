@@ -1,0 +1,48 @@
+{
+	// 起始入口页面，可设置多个，为爬虫的起点。
+	"entry_pages": [
+		{
+			"url": ,
+			"headers": {
+
+			}, 
+			// 页面选用的内容捕捉器
+			"catchers": "catcher_name"
+		}
+	],
+
+	// 页面请求 配置
+	"request": {
+		// 并发量限制
+		"concurrence": 30,
+		// 请求失败重试次数
+		"retry": 3,
+		// 请求默认头部设置，针对于所有页面
+		"headers": {}
+	},
+
+	// 数据捕获器 配置
+	"catchers": [
+		{
+			"name": "",
+			"file": "",
+			// 同步性，true为同步，false为异步，默认为true。
+			"sync": true,
+			// 数据处理器 配置
+			"processor": {
+				"file": "",
+				// 同步性，true为同步，false为异步，默认为false，使用回调参数
+				"sync": false
+			}
+		}
+	],
+
+	// 采集日志 配置
+	"log": {
+		"host": "localhost",
+		// "port": ,
+		"dbname": "test",
+		// 每次log存储的记录数。
+		"size": 100
+	}
+}
