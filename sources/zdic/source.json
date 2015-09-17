@@ -2,12 +2,10 @@
 	// 起始入口页面，可设置多个，为爬虫的起点。
 	"entry_pages": [
 		{
-			"url": ,
-			"headers": {
-
-			}, 
+			"url": "http://www.zdic.net/z/jbs/",
+			// "headers": {}, 
 			// 页面选用的内容捕捉器
-			"catchers": "catcher_name"
+			"catchers": "radicial_locater"
 		}
 	],
 
@@ -18,22 +16,40 @@
 		// 请求失败重试次数
 		"retry": 3,
 		// 请求默认头部设置，针对于所有页面
-		"headers": {}
+		"headers": {
+			"Referer": "http://www.zdic.net/z/jbs/"
+		}
 	},
 
 	// 数据捕获器 配置
 	"catchers": [
 		{
-			"name": "",
-			"file": "",
+			"name": "radicial_locater",
+			"file": "radicial_locater.js",
 			// 同步性，true为同步，false为异步，默认为true。
-			"sync": true,
+			"sync": true
 			// 数据处理器 配置
-			"processor": {
-				"file": "",
-				// 同步性，true为同步，false为异步，默认为false，使用回调参数
-				"sync": false
-			}
+			// "processor": {
+			// 	"file": "",
+			// 	// 同步性，true为同步，false为异步，默认为false，使用回调参数
+			// 	"sync": false
+			// }
+		},
+		{
+			"name": "word_locater",
+			"file": "word_locater.js"
+		},
+		{
+			"name": "collecter",
+			"file": "collecter.js",
+			// 同步性，true为同步，false为异步，默认为true。
+			"sync": true
+			// 数据处理器 配置
+			// "processor": {
+			// 	"file": "",
+			// 	// 同步性，true为同步，false为异步，默认为false，使用回调参数
+			// 	"sync": false
+			// }
 		}
 	],
 
