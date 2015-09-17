@@ -9,24 +9,18 @@ module.export = function () {
   // 页面请求配置信息
   var request = {
         headers: {},
-        concurrence: 25,
-        retry: 3
+        // 并发执行信号量
+        sem: 25,
+        retry: 3,
+        readyList: [],
+        runningList: []
       },
-      // processSem = 25,
       // 捕获器操作端
       catchers = [],
-      // 就绪列表
-      readyList = {
-        request: [],
-        catchers: [],
-        end: []
+      // log
+      log = {
+        readyList: []
       },
-      // runningList = {
-      //   request: [],
-      //   catchers: [],
-      // },
-      // 用于log的数据库操作端
-      logdb,
       // 所有页面url的记录
       urls = [],
       // 完成页面计数
@@ -66,7 +60,7 @@ module.export = function () {
 
         // 加入相应的捕获就绪队列
         for (var i = 0; i < page.catchers.length; i++) {
-          readyList.catchers[i].push(page);
+          catchers[i].readyList.push(page);
         };
         
       } else { // 请求响应失败
@@ -75,59 +69,28 @@ module.export = function () {
 
         if (++page.request.retry > request.retry) { // 页面重试次数小于系统设定重试次数
           // 重新加入请求就绪队列
-          readyList.request.push(page);  
+          request.readyList.push(page);  
         } else {
           // 重试次数已用尽，加入结束就绪1队列
-          readyList.end.push(page);
+          log.readyList.push(page);
         };
       };
-      requestSem++;
+      request.sem++;
     });
   };
-
-  // function initEntryPage(page) {
-  //   if (typeof(page) === "object" && (!page.purpose || page.purpose === [])) {
-  //     page.purpose = "locate";
-  //   } else if (typeof(page) === "string") {
-  //     page = {
-  //       "url": page,
-  //       "purpose": "locate"
-  //     };
-  //   } else {
-  //     throw new Error("The parem for initializing entry page is wrong.");
-  //   }
-  //   that.addPage(page);
-  // };
-
-  // function collect(page) {
-  //   page.data = catcher.catch(page.body);
-  //   if (page.data) {
-  //     page.collect.catch.status = 1;
-  //     page.collect.process.status = 1;
-  //     processor.process(page.data, function(err, res) {
-  //       if (err) {
-  //         page.collect.process.status = 2;
-  //       } else {
-  //         page.collect.process.status = 3;
-  //       }
-  //     });
-  //   } else {
-  //     page.collect.catch.status = 2;
-  //   }
-  // };
 
   // 记录采集日志文件
   function log(callback) {
     // 打开数据库
-    logdb.open(function (err, db) {
+    log.db.open(function (err, db) {
       if (err) throw err;
       // 创建或打开数据集
       db.collection('collect_log', {safe: true}, function (err, collection) {
         if (err) throw err;
 
-        var insertList = readyList.end;
+        var insertList = log.readyList;
         // 清空结束就绪列表
-        readyList.end = [];
+        log.readyList = [];
 
         // 向插入数据库中插入记录
         collection.insert(insertList, {safe: true}, function (err, result) {
@@ -163,7 +126,6 @@ module.export = function () {
 
   // 增加一个处理页面，多于定位器处使用添加数据页。
   this.addPage = function (p) {
-
     if (typeof(p) == "object") { // 对象式参数
       if (p.url === undefined || hasUrl(p.url)) {
         return false;
@@ -222,7 +184,7 @@ module.export = function () {
     }
     
     // 页面进入请求准备队列
-    readyList.request.push(page);
+    request.readyList.push(page);
     return true;
   };
 
@@ -230,32 +192,108 @@ module.export = function () {
   this.collect = function () {
     while (true) {
       // 异步控制请求页面
-      while (requestSem > 0 && readyList.request.length > 0) {
-        requestSem--;
-        var page = readyList.request.shift();
+      while (request.sem > 0 && request.readyList.length > 0) {
+        request.sem--;
+        var page = request.readyList.shift();
         request(page);
       }
 
       // 结束页面批量log
-      if (readyList.end.length > 50) {
+      if (log.readyList.length > 50) {
         log();
       };
 
       // 全部catchers的ready页面捕捉处理
       for (var i = 0; i < readyList.catchers.length; i++) {
-        while (readyList.catchers[i].length > 0) {
-          var page = readyList.catchers[i].shift();
-          if (catchers[i].run(page)) {
-            // 捕捉完成
-            page.catchers[i].status = SUCCESS;
+        // 页面捕捉处理
+        while (catchers[i].readyList.length > 0) {
+          if (catchers[i].sync) { // 同步模式
+            var page = catchers[i].readyList.shift();
+            if (catchers[i].run(page)) {
+              // 捕捉完成
+              page.catchers[i].status = SUCCESS;
+
+              if (catchers[i].processor !== undefined) { 
+                // 加入数据处理就绪队列
+                catchers[i].processor.readyList.push(page);
+              } else {
+                // 捕获全部完成
+                page.undoneCount--;
+                if (page.undoneCount === 0) {
+                  log.readyList.push(page);
+                };
+              };
+            } else {
+              // 捕捉失败
+              page.catchers[i].status = FAILTURE;
+              log.readyList.push(page);
+            };
+          } else { // 异步模式
+            if (catchers[i].sem > 0) {
+              catchers[i].sem--;
+              var page = catchers[i].readyList.shift();
+              catchers[i].runningList.push(page);
+              page.catchers[i].status = PROCESSING;
+              catchers[i].run(page, (function (i) {
+                var i;
+                return function (error) {
+                  if (error) {
+                    // 捕捉失败
+                    page.catchers[i].status = FAILTURE;
+                    log.readyList.push(page);
+                  } else {
+                    // 捕捉完成
+                    page.catchers[i].status = SUCCESS;
+                    if (catchers[i].processor !== undefined) { 
+                      // 加入数据处理就绪队列
+                      catchers[i].processor.readyList.push(page);
+                    } else {
+                      // 捕获全部完成
+                      page.undoneCount--;
+                      if (page.undoneCount === 0) {
+                        log.readyList.push(page);
+                      };
+                    };
+                  };
+                  catchers[i].sem++;
+                };
+              })());
+            };
+          };
+        };
+        while (catchers[i].processor.readyList.length > 0) {
+          if (!catchers[i].processor.sync && catchers[i].processor.sem > 0) { // 异步执行控制
+            catchers[i].processor.sem--;
+            var page = catchers[i].processor.readyList.shift();
+            catchers[i].processor.runningList.push(page);
+            catchers[i].processor.status = PROCESSING;
+            catchers[i].processor.run(page.data, function (error) {
+              if (error) {
+                catchers[i].processor.status = FAILTURE;
+                catchers[i].processor.error = error;
+              } else {
+                catchers[i].processor.status = SUCCESS;
+              };
+              page.undoneCount--;
+              if (page.undoneCount === 0) {
+                log.readyList.push(page);
+              };
+              catchers[i].processor.sem++;
+            });
+          };
+
+          if (catchers[i].processor.sync) { // 同步执行控制
+            var page = catchers[i].processor.readyList.shift();
+            if (catchers[i].processor.run(page.data)) {
+              catchers[i].processor.status = SUCCESS;
+            } else {
+              catchers[i].processor.status = FAILTURE;
+              catchers[i].processor.error = error;
+            };
             page.undoneCount--;
             if (page.undoneCount === 0) {
-              readyList.end.push(page);
+              log.readyList.push(page);
             };
-          } else {
-            // 捕捉失败
-            page.catchers[i].status = FAILTURE;
-            readyList.end.push(page);
           };
         };
       };
@@ -286,6 +324,10 @@ module.export = function () {
       catchers[i].run = require(source_package_dir + '/' + sconfig.catchers[i].file);
       catchers[i].name = sconfig.catchers[i].name;
       catchers[i].sync = (sconfig.catchers[i].sync === undefined) ? true : sconfig.catchers[i].sync;
+      // 配置并发信号量
+      if (!catchers[i].sync) {
+        catchers[i].sem = (sconfig.catchers[i].concurrence === undefined) ? 25 : sconfig.catchers[i].concurrence;
+      };
       // 配置采集数据处理器
       if (catchers[i].processor !== undefined) {
         catchers[i].processor.run = require(source_package_dir + '/' + sconfig.catchers[i].processor.file);
@@ -311,10 +353,10 @@ module.export = function () {
     // 初始化MongoDB
     if (sconfig.log !== undefined) {
       var server = mongo.Server(sconfig.log.host || 'localhost', sconfig.log.port || mongo.Connection.DEFAULT_PORT, {auto_reconnect: true});
-      logdb = mongo.Db(sconfig.log.dbname || 'collect_log');
+      log.db = mongo.Db(sconfig.log.dbname || 'collect_log');
     } else {
       var server = mongo.Server('localhost', mongo.Connection.DEFAULT_PORT, {auto_reconnect: true});
-      logdb = mongo.Db('collect_log');
+      log.db = mongo.Db('collect_log');
     };
   };
 };
