@@ -1,64 +1,61 @@
 {
-	// 起始入口页面，可设置多个，为爬虫的起点。
+	"name": "zdic",
 	"entry_pages": [
 		{
 			"url": "http://www.zdic.net/z/jbs/",
-			// "headers": {}, 
-			// 页面选用的内容捕捉器
 			"catchers": "radicial_locater"
 		}
 	],
-
-	// 页面请求 配置
 	"request": {
-		// 并发量限制
+		"retry": 5,
 		"concurrence": 30,
-		// 请求失败重试次数
-		"retry": 3,
-		// 请求默认头部设置，针对于所有页面
 		"headers": {
-			"Referer": "http://www.zdic.net/z/jbs/"
+			"Referer": "http://www.zdic.net/z/jbs/",
+			"Host": "www.zdic.net"
 		}
 	},
-
-	// 数据捕获器 配置
 	"catchers": [
 		{
 			"name": "radicial_locater",
 			"file": "radicial_locater.js",
-			// 同步性，true为同步，false为异步，默认为true。
+			"step": 1,
 			"sync": true
-			// 数据处理器 配置
-			// "processor": {
-			// 	"file": "",
-			// 	// 同步性，true为同步，false为异步，默认为false，使用回调参数
-			// 	"sync": false
-			// }
 		},
 		{
 			"name": "word_locater",
+			"step": 1,
 			"file": "word_locater.js"
 		},
 		{
-			"name": "collecter",
-			"file": "collecter.js",
-			// 同步性，true为同步，false为异步，默认为true。
+			"name": "basic_collecter",
+			"file": "basic_collecter.js",
+			"step": 500,
 			"sync": true
-			// 数据处理器 配置
-			// "processor": {
-			// 	"file": "",
-			// 	// 同步性，true为同步，false为异步，默认为false，使用回调参数
-			// 	"sync": false
-			// }
+		},
+		{
+			"name": "detailed_collecter",
+			"file": "detailed_collecter.js",
+			"step": 500,
+			"sync": true
+		},
+		{
+			"name": "kangxi_collecter",
+			"file": "kangxi_collecter.js",
+			"step": 500,
+			"sync": true
+		},
+		{
+			"name": "swjz_collecter",
+			"file": "swjz_collecter.js",
+			"step": 500,
+			"sync": true
 		}
 	],
-
-	// 采集日志 配置
 	"log": {
 		"host": "localhost",
-		// "port": ,
-		"dbname": "test",
-		// 每次log存储的记录数。
-		"size": 100
+		"db": "test",
+		"user": "collecter",
+		"pwd": "collectsuccess",
+		"size": 50
 	}
 }

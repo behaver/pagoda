@@ -1,15 +1,25 @@
-module.export = function (c) {
+module.exports = function (c) {
 	var controller = c;
+	var cheerio = require("cheerio");
 
-	this.run = function (body) {
-		var cheerio = require("cheerio");
-		$ = cheerio.load(body);
+	this.run = function (page) {
+		// console.log('in word_locater');
+		var $ = cheerio.load(page.body);
 
 		// 获取所有字链接
-		$("a").each(function (i, e) {
+		$("li a").each(function (i, e) {
 			controller.addPage({
-				url: $(e).attr("href"),
-				catchers: "collecter"
+				url: "http://www.zdic.net" + $(e).attr("href"),
+				catchers: "basic_collecter"
+			});
+		});
+
+		$(".Paginator a").each(function (i, e) {
+			var mark = $(e).attr("onclick").split("'")[1];
+			// console.log(mark);
+			controller.addPage({
+				url: "http://www.zdic.net/z/jbs/bs/?bs=" + mark,
+				catchers: "word_locater"
 			});
 		});
 

@@ -1,0 +1,94 @@
+{
+	"pinyins" : [
+		{
+			"pinyin" :    , // 拼音
+			"pinyin2": , // 拼音2
+			"phonetic":    ,
+			"meanings": []
+		}
+	],//拼音
+	"radicial" :    ,//部首
+	"external_stroke":    ,//部外笔画
+	"total_stroke":    ,//总笔画
+	"structure":    ,//结构
+	"making_method":    ,//造字方法
+	"variant" :[],//一种格式为图片路径，另一种为字
+	"fivepen":    ,//五笔
+	"cangjie":    ,//仓颉
+	"zhengma":    ,//郑码
+	"sijiao":    ,//四角
+	"unicode":    ,//统一码
+	"stroke":    ,//笔顺
+	"trad_word": ,// 繁体字
+	"simp_word": ,// 简体字
+	"charactor": []//字体集
+}
+"data" : {
+	"pinyins" : [
+		{
+			// "pinyin" : "dí",
+			// "pinyin2" : "di2",
+			// "phonetic" : "ㄉㄧˊ",
+			// "meanings" : [
+			// 	"　◎ 真实，实在：～确。～当（dàng ）。～情。～真。～证。",
+			// 	"<strong>&#x5176;&#x5B83;&#x5B57;&#x4E49;</strong>"
+			// ]
+		},
+		{
+			"pinyin" : "dì",
+			"pinyin2" : "di4",
+			"phonetic" : "ㄉㄧˋ",
+			"meanings" : [
+				"　◎ 箭靶的中心：中（zhòng ）～。有～放矢。众矢之～。目～（要达到的目标、境地）。",
+				"<strong>&#x5176;&#x5B83;&#x5B57;&#x4E49;</strong>"
+			]
+		},
+		{
+			"pinyin" : "de",
+			"pinyin2" : "de0",
+			"phonetic" : "˙ㄉㄜ",
+			"meanings" : [
+				"　1. 用在词或词组后表明形容词性：美丽～。",
+				"　2. 代替所指的人或物：唱歌～。",
+				"　3. 表示所属的关系的词：他～衣服。",
+				"　4. 助词，用在句末，表示肯定的语气，常与“是”相应：这句话是很对～。",
+				"　5. 副词尾，同“地2”。"
+			]
+		},
+		{
+			"meanings" : [
+				""
+			],
+			"pinyin" : "dàng",
+			"phonetic" : ""
+		}
+	],
+	// "variant" : [
+	// 	"/p/?l=kj&u=38A9&s=20",
+	// 	"/p/?l=kj&u=24FA0&s=20",
+	// 	"/p/?l=kj&u=25866&s=20",
+	// 	"勺",
+	// 	"墑",
+	// 	"旳",
+	// 	"菂"
+	// ],
+	// "charactor" : [
+	// 	"《现代汉语常用字表》",
+	// 	"《常用國字標準字體表》",
+	// 	"《现代汉语通用字表》"
+	// ],
+	// "value" : "的",
+	// "radical" : "白",
+	// "external_stroke" : "3",
+	// "total_stroke" : "8",
+	// "structure" : "白38左右结构",
+	// "making_method" : "形声",
+	// "unicode" : " U+7684",
+	// "fivepen" : "RQYY",
+	// "cangjie" : "HAPI",
+	// "zhengma" : "NKRS",
+	// "sijiao" : "27620",
+	// "stroke" : "ノ丨フ一一ノフ丶",
+	"complex" : "",
+	"simplified" : ""
+}

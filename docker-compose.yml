@@ -1,0 +1,12 @@
+pagoda_node: 
+  image: 'node:4'
+  command: bash
+  volumes:
+    - .:/usr/src/pagoda
+  workdir: /usr/src/pagoda
+  links:
+    - pagoda-mongo:mongo
+pagoda_mongo: 
+  image: 'mongo'
+  volumes:
+    - /media/stalker/dev/data/mongo:/var/lib/mongo
