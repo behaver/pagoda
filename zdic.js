@@ -6,4 +6,4 @@
  */
 
 var c = require('./index.js');
-c.load('./sources/zdic').collect();
+c.load('./sources/zdic');
