@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/behavior/pagoda.git"
+    "url": "git+https://github.com/behaver/turrim.git"
   },
   "keywords": [
     "collecter"
@@ -29,7 +29,7 @@
   "author": "Vincent <qianxing@yeah.net>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/behavior/pagoda/issues"
+    "url": "https://github.com/behaver/turrim/issues"
   },
-  "homepage": "https://github.com/behavior/pagoda#readme"
+  "homepage": "https://github.com/behaver/turrim#readme"
 }
