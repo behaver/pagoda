@@ -1,8 +1,2 @@
-/*
-!.gitignore
-!index.js
-!package.json
-!README.md
-!/node_modules
-!/doc
-!/sources
+/node_modules
+/doc

@@ -1,16 +1,19 @@
 {
-  "name": "pagoda",
-  "version": "0.1.0",
+  "name": "turrim",
+  "version": "2.1.0",
   "description": "data collecter",
   "main": "index.js",
   "directories": {
     "doc": "doc"
   },
   "dependencies": {
-    "mongous": "^0.2.7",
-    "request": "^2.62.0",
+    "cheerio": "^0.19.0",
+    "co": "^4.6.0",
+    "colors": "^1.1.2",
+    "iconv-lite": "^0.4.15",
+    "mongodb": "^2.2.19",
     "mysql": "^2.9.0",
-    "cheerio": "^0.19.0"
+    "request": "^2.62.0"
   },
   "devDependencies": {},
   "scripts": {
@@ -18,15 +21,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/behavior/data-collecter.git"
+    "url": "git+https://github.com/behavior/pagoda.git"
   },
   "keywords": [
     "collecter"
   ],
   "author": "Vincent <qianxing@yeah.net>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/behavior/data-collecter/issues"
+    "url": "https://github.com/behavior/pagoda/issues"
   },
-  "homepage": "https://github.com/behavior/data-collecter#readme"
+  "homepage": "https://github.com/behavior/pagoda#readme"
 }

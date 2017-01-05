@@ -1,10 +1,10 @@
 /**
- * Pagoda 数据采集
+ * Turrim 数据采集
  * @authors Vincent (qianxing@yeah.net)
  * @date    2015-09-06 10:31:27
  * @version 0.3.0
  */
-function Pagoda() {
+function Turrim() {
     // 页面请求配置信息
     var request = {
         module: require("request"),
@@ -1049,4 +1049,4 @@ function Pagoda() {
     };
 };
 
-module.exports = new Pagoda();
+module.exports = new Turrim();
