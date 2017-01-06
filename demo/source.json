@@ -1,0 +1,33 @@
+{
+    "name": "tumblr",
+    "request": {
+        "retry": 10,
+        "concurrence": 30,
+        "headers": {}
+    },
+    "log": {
+        "host": "localhost",
+        "db": "turrim",
+        "user": "root",
+        "pwd": "111111",
+        "size": 50
+    },
+    "schemas": {
+        "default": {
+            "catchers": {
+                "name": "default_catcher",
+                "file": "DefaultCatcher.js",
+                "step": 500,
+                "debug": true,
+                "concurrence": 1
+            },
+            "processors": {
+                "name": "default_processor",
+                "file": "DefaultProcessor.js",
+                "step": 500,
+                "debug": true,
+                "concurrence": 1
+            }
+        },
+    }
+}
