@@ -22,6 +22,8 @@ function Turrim() {
 
     iconv = require('iconv-lite'),
 
+    path = require('path'),
+
     sourceDir = '',
 
     /**
@@ -933,10 +935,10 @@ function Turrim() {
     this.load = function(source_package_dir) {
         return co(function* () {
             try {
-                sourceDir = source_package_dir;
+                sourceDir = path.join(process.cwd(), source_package_dir);
 
                 // 读入并解析配置文件
-                var sconfig = require(sourceDir + '/source.json');
+                var sconfig = require(path.join(sourceDir, '/source.json'));
 
                 // 配置请求选项
                 if (sconfig.request.concurrence !== undefined) request.sem = sconfig.request.concurrence;
