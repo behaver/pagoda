@@ -261,12 +261,13 @@ function Turrim() {
                 headers: page.headers,
                 encoding: page.charset ? null : 'utf8',
                 proxy: page.proxy ? page.proxy : null, 
+                gzip: page.gzip ? page.gzip : false,
             }, function (error, response, content) { // 请求完成回调
-                console.log(error,response, content)
                 request.runningList.shift(page);
                 if (!error && response.statusCode == 200) { // 请求响应成功
-                    // page.document = content;
                     page.document = page.charset ? iconv.decode(content, page.charset) : content;
+                    
+                    // console.log(page.document);
                     page.request.status = SUCCESS;
 
                     log.weight += 30;
@@ -749,6 +750,7 @@ function Turrim() {
                 bind: p.bind ? p.bind : null,
                 headers: request.headers,
                 proxy: p.proxy,
+                gzip: p.gzip,
                 document: null, 
                 request: {
                     status: 0,
