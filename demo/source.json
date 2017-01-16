@@ -1,5 +1,5 @@
 {
-    "name": "tumblr",
+    "name": "demo",
     "request": {
         "retry": 10,
         "concurrence": 30,
@@ -28,6 +28,6 @@
                 "debug": true,
                 "concurrence": 1
             }
-        },
+        }
     }
 }
