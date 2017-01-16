@@ -173,7 +173,7 @@ function Turrim() {
             }
 
             // 模块配置
-            console.log(('加载模块: ' + sourceDir + '/' + processorCfg.file).blue);
+            // console.log(('加载模块: ' + sourceDir + '/' + processorCfg.file).blue);
             if (processorCfg.file) var module = require(sourceDir + '/' + processorCfg.file);
             else var module = require(sourceDir + '/' + processor.name + '.js');
             processor.module = new module(self);
@@ -255,11 +255,14 @@ function Turrim() {
             // 加入请求运行队列、更改页面请求状态
             request.runningList.push(page);
             page.request.status = PROCESSING;
+
             request.module({
                 url: page.url,
                 headers: page.headers,
-                encoding : page.charset ? null : 'utf8',
+                encoding: page.charset ? null : 'utf8',
+                proxy: page.proxy ? page.proxy : null, 
             }, function (error, response, content) { // 请求完成回调
+                console.log(error,response, content)
                 request.runningList.shift(page);
                 if (!error && response.statusCode == 200) { // 请求响应成功
                     // page.document = content;
@@ -736,14 +739,16 @@ function Turrim() {
      */
     this.addPage = function (p) {
         if (typeof(p) == "object") { // 对象式参数
+            console.log(urls)
             if (p.url === undefined || hasUrl(p.url)) {
                 return false;
             }
-
+            console.log(p.proxy)
             var page = {
                 url: p.url,
                 bind: p.bind ? p.bind : null,
                 headers: request.headers,
+                proxy: p.proxy,
                 document: null, 
                 request: {
                     status: 0,
@@ -759,10 +764,10 @@ function Turrim() {
             if (p.headers) {
                 if (typeof(p.headers) == 'object') {
                     for (var s in p.headers) {
-                        page.headers[s] = p.headers.s;
+                        page.headers[s] = p.headers[s];
                     };
                 } else {
-                    throw new Error(' 我TM没法处理你给的这个格式的headers!');
+                    throw new Error('我TM没法处理你给的这个格式的headers!');
                 }
             }
 
@@ -882,12 +887,12 @@ function Turrim() {
                         logPages(cb);
                     };
                 };
-
                 var ts = [];
                 // 监视空闲请求信号及就绪队列
                 for (var i = 0; i < 100 && request.sem > 0 && request.readyList.length > 0; i++) { // 存在空闲请求信号量和待请求页面
                     request.sem--;
                     var page = request.readyList.shift();
+                    // console.log(page,222);
                     // 执行请求页面(异步)
                     ts.push((function (page){
                         return function (cb) {
@@ -895,7 +900,8 @@ function Turrim() {
                         }
                     })(page));
                 }
-                yield ts;
+                var res = yield ts;
+                console.log(res);
 
                 // 页面捕捉处理
                 catchPages();
@@ -935,6 +941,7 @@ function Turrim() {
     this.load = function(source_package_dir) {
         return co(function* () {
             try {
+
                 sourceDir = path.join(process.cwd(), source_package_dir);
 
                 // 读入并解析配置文件
@@ -1017,10 +1024,10 @@ function Turrim() {
                 log.port = (sconfig.log.port === undefined) ? 27017 : sconfig.log.port;
 
                 // 配置log使用的db
-                log.db = (sconfig.log.db === undefined) ? 'pagoda' : sconfig.log.db
+                log.db = (sconfig.log.db === undefined) ? 'turrim' : sconfig.log.db;
 
                 // 配置log使用的collections
-                log.collection = 'pagoda_' + sconfig.name + '_log',
+                log.collection = sconfig.name;
 
                 // 配置执行一次所需加权量
                 log.size = sconfig.log.size ? sconfig.log.size : 300;
@@ -1037,7 +1044,6 @@ function Turrim() {
                     'mongodb://' + log.host + ':' + log.port + '/' + log.db;
 
                 var res = yield resumeBreakpoint();
-                
             } catch(e) {
                 console.log(e.message);
                 console.log(e.stack);
