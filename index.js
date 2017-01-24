@@ -405,8 +405,8 @@ function Turrim() {
                         // 在数据库中读取未数据处理页面
                         var db = yield mongo.connect(log.dsn);
                         var pcol = db.collection(log.collection);
-                        var docs = yield pcol.find({ "unprocessedCount": {"$gt": 0}, "res": {$exists: 0} }).limit(size).toArray();
-                        var docs_wait = yield pcol.find({ "unprocessedCount": {"$gt": 0}, "res": "wait" }).limit(Math.ceil(size/2)).toArray();
+                        var docs = yield pcol.find({ "unprocessedCount": {"$gt": 0}, "uncatchedCount": 0, "res": {$exists: 0} }).limit(size).toArray();
+                        var docs_wait = yield pcol.find({ "unprocessedCount": {"$gt": 0}, "uncatchedCount": 0, "res": "wait" }).limit(Math.ceil(size/2)).toArray();
                         // 关闭数据库，释放资源。
                         db.close();
 
@@ -740,11 +740,9 @@ function Turrim() {
      */
     this.addPage = function (p) {
         if (typeof(p) == "object") { // 对象式参数
-            console.log(urls)
             if (p.url === undefined || hasUrl(p.url)) {
                 return false;
             }
-            console.log(p.proxy)
             var page = {
                 url: p.url,
                 bind: p.bind ? p.bind : null,

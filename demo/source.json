@@ -8,8 +8,6 @@
     "log": {
         "host": "localhost",
         "db": "turrim",
-        "user": "root",
-        "pwd": "111111",
         "size": 50
     },
     "schemas": {
