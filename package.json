@@ -1,6 +1,6 @@
 {
   "name": "turrim",
-  "version": "2.1.9",
+  "version": "2.1.13",
   "description": "data collecter",
   "main": "index.js",
   "directories": {

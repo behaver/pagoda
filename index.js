@@ -650,7 +650,7 @@ function Turrim() {
                     console.log(e.stack);
                     throw e;
                 }
-                if (_pages[i].uncatchedCount > 0) { // 未处理完页面，放回内存。
+                if (_pages[i].request.status != FAILTURE && _pages[i].uncatchedCount > 0) { // 未处理完页面，放回内存。
                     pages.push(_pages[i]);
                 }
             };
@@ -901,7 +901,6 @@ function Turrim() {
                     })(page));
                 }
                 var res = yield ts;
-                console.log(res);
 
                 // 页面捕捉处理
                 catchPages();
